@@ -36,7 +36,8 @@ def ULA(r_seed,Potential,step, N, n, d, burn_type = "SGLD",main_type = "SGLDFP")
     #select method for gradient updates during main loop   
     traj = np.zeros((n, d))
     traj_grad = np.zeros((n, d))
-    x = np.random.normal(scale=5.0, size=d) # initial value X_0
+    x = np.random.normal(scale=1.0, size=d)
+    #x = np.random.normal(scale=5.0, size=d) # initial value X_0
     for k in np.arange(N): # burn-in period
         grad_burn_val = grad_burn(x)
         x = x + step * grad_burn_val +\
