@@ -36,7 +36,8 @@ def ULA(r_seed,Potential,step, N, n, d, burn_type = "SGLD",main_type = "SGLDFP")
     #select method for gradient updates during main loop   
     traj = np.zeros((n, d))
     traj_grad = np.zeros((n, d))
-    x = np.random.normal(scale=5.0, size=d) # initial value X_0
+    x = np.random.normal(scale=1.0, size=d)
+    #x = np.random.normal(scale=5.0, size=d) # initial value X_0
     for k in np.arange(N): # burn-in period
         grad_burn_val = grad_burn(x)
         x = x + step * grad_burn_val +\
@@ -70,9 +71,11 @@ def ULA(r_seed,Potential,step, N, n, d, burn_type = "SGLD",main_type = "SGLDFP")
             raise "Not implemented error: invalid value in ULA sampler, in main_type" 
         if (main_type != "full"):#we need to re-calculate gradient
             for k in np.arange(n): # samples
+                #for now we use the same batch in the gradient estimates!
+                grad = grad_main(x)
                 traj[k,]=x
-                traj_grad[k,] = grad_main(x)
-                x = x + step * grad_main(x) + np.sqrt(2*step)*np.random.normal(size=d) 
+                traj_grad[k,] = grad
+                x = x + step * grad + np.sqrt(2*step)*np.random.normal(size=d) 
         else:#in case of full gradient we do not need to re-calculate gradients on each step
             for k in np.arange(n): # samples
                 grad = grad_main(x)

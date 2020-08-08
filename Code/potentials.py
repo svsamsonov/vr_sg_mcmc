@@ -102,9 +102,7 @@ class IndependentPotential:
             return -4*X**3/(1 + X**4)
         else:
             raise "Not implemented error in IndependentPotential::gradpotential"
-        
-    
-    
+################################################################################################################################ 
 class GaussPotential:
     """
     implements pseudo-gaussian potential function
@@ -472,8 +470,33 @@ class PotentialThree:
             grad[i] = -z[i]
         return grad
 ##########################################################################################################################################
-    
+class BayesGausMixture:
+    """
+    Implements bayesian problem for estimating gaussian mixture parameters
+    """
+    def __init__(self,mu_1,mu_2,sigma,X):
+        self.mu_1 = mu_1
+        self.mu_2 = mu_2
+        self.sigma_x = sigma
+        self.sigma_param = sigma_theta
+        self.X = copy.deepcopy(X)
 
+    def gradpotential(self,theta):
+        theta_1 = theta[0]
+        theta_2 = theta[1]
+        mu_1 = self.mu_1
+        mu_2 = self.mu_2
+        sigma_x = self.sigma_x
+        sigma_p = self.sigma_p
+        grad = np.zeros(2, dtype = float)
+        arg_1 = self.X - theta_1
+        arg_2 = self.X - theta_2
+        denom = np.exp(-(arg_1)**2/(2*sigma_x**2)) + np.exp(-(arg_2)**2/(2*sigma_x**2))
+        grad[0] = -theta_1/sigma_p**2 + (1/sigma_x**2)*arg_1*np.exp(-arg_1**2 / (2*sigma_x**2)) / denom
+        grad[1] = -theta_2/sigma_p**2 + (1/sigma_x**2)*arg_2*np.exp(-arg_2**2 / (2*sigma_x**2)) / denom
+        return grad
+         
+#################################################################################################################################
 class potentialRegression:
     """ implementing a potential U = logarithm of the posterior distribution
         given by a Bayesian regression
